@@ -9,7 +9,9 @@ import packets.incoming.*;
 import packets.outgoing.EnemyHitPacket;
 import packets.outgoing.PlayerShootPacket;
 import packets.reader.BufferReader;
+import tomato.client.HTTPClient;
 import tomato.gui.maingui.TomatoGUI;
+import tomato.realmshark.RealmCharacterStats;
 import util.Pair;
 import util.PropertiesManager;
 import util.Util;
@@ -23,6 +25,8 @@ import java.nio.ByteOrder;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import com.google.gson.JsonObject;
 
 import static java.util.Map.Entry.comparingByValue;
 
@@ -78,6 +82,11 @@ public class DpsLogger {
         if (true) logPackets.add(packet);
         if (packet instanceof CreateSuccessPacket) {
             CreateSuccessPacket p = (CreateSuccessPacket) packet;
+            System.out.println("CreateSuccessPacket: " + p.objectId);
+            System.out.print(p);
+            RealmCharacterStats newStats = new RealmCharacterStats();
+            newStats.decode(p.str);
+            System.out.println(newStats);
             player = new Entity(p.objectId, "isMe");
             entityList.put(player.id, player);
         } else if (packet instanceof PlayerShootPacket) {
@@ -614,6 +623,9 @@ public class DpsLogger {
         }
         firstPage = new Entity[0];
         entityLogs.add(displayList());
+        System.out.println(stringDmg(displayList(), new Filter()));
+        HTTPClient client = new HTTPClient("http://localhost:3000/api/sniffa/user");
+        client.POST(stringDmg(displayList(), new Filter()));
         String labelText = (displayIndex + 1) + "/" + (entityLogs.size() + 1);
         TomatoGUI.setTextAreaAndLabelDPS(text, labelText, selectable);
     }

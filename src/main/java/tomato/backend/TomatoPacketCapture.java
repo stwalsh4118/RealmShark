@@ -6,9 +6,9 @@ import packets.incoming.*;
 import packets.outgoing.EnemyHitPacket;
 import packets.outgoing.HelloPacket;
 import packets.outgoing.PlayerShootPacket;
+import tomato.Tomato;
 import tomato.backend.data.TomatoData;
 import tomato.gui.maingui.TomatoGUI;
-import tomato.Tomato;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -73,7 +73,7 @@ public class TomatoPacketCapture implements Controller {
             QuestFetchResponsePacket p = (QuestFetchResponsePacket) packet;
             Stream<QuestData> list = Arrays.stream(p.quests).sorted(Comparator.comparing(questData -> questData.category));
             TomatoGUI.updateQuests(list.toArray(QuestData[]::new));
-
+            System.out.println("Quests updated");
             data.charListHttpRequest();
         }
     }
