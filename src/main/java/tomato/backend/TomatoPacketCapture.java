@@ -8,6 +8,7 @@ import packets.outgoing.HelloPacket;
 import packets.outgoing.PlayerShootPacket;
 import tomato.backend.data.TomatoData;
 import tomato.gui.maingui.TomatoGUI;
+import tomato.Tomato;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -28,10 +29,12 @@ public class TomatoPacketCapture implements Controller {
      * @param packet incoming packets to be processed.
      */
     public void packetCapture(Packet packet) {
+        Tomato.dpsLoggerPacket(packet);
+
+
         if (packet instanceof NewTickPacket) {
             NewTickPacket p = (NewTickPacket) packet;
             data.updateNewTick(p);
-            TomatoGUI.setTextAreaAndLabelDPS(DpsToString.stringDmg(data), "123", false);
         } else if (packet instanceof UpdatePacket) {
             UpdatePacket p = (UpdatePacket) packet;
             data.update(p);
@@ -50,6 +53,7 @@ public class TomatoPacketCapture implements Controller {
         } else if (packet instanceof TextPacket) {
             TextPacket p = (TextPacket) packet;
             data.text(p);
+            Tomato.textPacket(p);
         } else if (packet instanceof MapInfoPacket) {
             MapInfoPacket p = (MapInfoPacket) packet;
             data.setNewRealm(p);

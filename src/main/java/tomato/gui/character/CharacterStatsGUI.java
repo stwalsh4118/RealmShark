@@ -5,6 +5,7 @@ import assets.IdToAsset;
 import assets.ImageBuffer;
 import tomato.realmshark.RealmCharacter;
 import tomato.backend.data.TomatoData;
+import tomato.gui.maingui.TomatoGUI;
 import tomato.realmshark.enums.CharacterStatistics;
 
 import javax.swing.*;
@@ -36,6 +37,12 @@ public class CharacterStatsGUI extends JPanel {
         right = new JPanel();
         JPanel topLeft = new JPanel();
 
+        TomatoGUI.panelsToChangeColor.add(top);
+        TomatoGUI.panelsToChangeColor.add(left);
+        TomatoGUI.panelsToChangeColor.add(right);
+        TomatoGUI.panelsToChangeColor.add(topLeft);
+
+
         JScrollPane spTop = new JScrollPane(top);
         JScrollPane spLeft = new JScrollPane(left);
         JScrollPane spRight = new JScrollPane(right);
@@ -52,6 +59,10 @@ public class CharacterStatsGUI extends JPanel {
         setLayout(new BorderLayout());
         JPanel leftBar = new JPanel();
         JPanel rightBar = new JPanel();
+        TomatoGUI.panelsToChangeColor.add(leftBar);
+        TomatoGUI.panelsToChangeColor.add(rightBar);
+
+
         leftBar.setLayout(new BorderLayout());
         rightBar.setLayout(new BorderLayout());
         add(leftBar, BorderLayout.WEST);
@@ -109,6 +120,7 @@ public class CharacterStatsGUI extends JPanel {
             });
 
             JPanel p = new JPanel();
+            TomatoGUI.panelsToChangeColor.add(p);
             p.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, Color.BLACK));
             p.add(dungeonIcon);
             p.setPreferredSize(new Dimension(35, 37));
@@ -165,7 +177,9 @@ public class CharacterStatsGUI extends JPanel {
         for (int i = 0; i < charCount; i++) {
             RealmCharacter c = data.chars.get(i);
             JLabel player = playerIcon(c);
+            TomatoGUI.labelsToChangeColor.add(player);
             JPanel p = new JPanel(new GridBagLayout());
+            TomatoGUI.panelsToChangeColor.add(p);
             p.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, Color.BLACK));
             p.setPreferredSize(new Dimension(150, 27));
             p.add(player);
@@ -191,8 +205,10 @@ public class CharacterStatsGUI extends JPanel {
             for (int j = 0; j < dungeonCount; j++) {
                 int v = c.charStats.dungeonStats[j];
                 JPanel p2 = new JPanel();
+                TomatoGUI.panelsToChangeColor.add(p2);
                 p2.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, Color.BLACK));
                 labels[i][j] = new JLabel("" + v);
+                TomatoGUI.labelsToChangeColor.add(labels[i][j]);
                 p2.add(labels[i][j]);
                 p2.setPreferredSize(new Dimension(35, 27));
                 right.add(p2);
@@ -213,6 +229,7 @@ public class CharacterStatsGUI extends JPanel {
             BufferedImage img = ImageBuffer.getImage(eq);
             ImageIcon icon = new ImageIcon(img.getScaledInstance(15, 15, Image.SCALE_DEFAULT));
             JLabel characterLabel = new JLabel(c.classString + " " + c.fame, icon, JLabel.CENTER);
+            TomatoGUI.labelsToChangeColor.add(characterLabel);
             characterLabel.addMouseListener(new MouseAdapter() {
                 public void mouseClicked(MouseEvent e) {
                     if (data.chars == null) return;

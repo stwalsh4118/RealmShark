@@ -1,23 +1,26 @@
 package tomato.damagecalc;
 
-import tomato.gui.maingui.TomatoGUI;
-import util.PropertiesManager;
+import assets.AssetMissingException;
+import assets.IdToAsset;
 import packets.Packet;
+import packets.PacketType;
 import packets.data.StatData;
 import packets.incoming.*;
 import packets.outgoing.EnemyHitPacket;
 import packets.outgoing.PlayerShootPacket;
-import assets.AssetMissingException;
-import assets.IdToAsset;
+import packets.reader.BufferReader;
+import tomato.gui.maingui.TomatoGUI;
 import util.Pair;
+import util.PropertiesManager;
 import util.Util;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Arrays;
-import java.util.List;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -71,7 +74,8 @@ public class DpsLogger {
             return;
         }
 
-        if (saveToFile) logPackets.add(packet);
+
+        if (true) logPackets.add(packet);
         if (packet instanceof CreateSuccessPacket) {
             CreateSuccessPacket p = (CreateSuccessPacket) packet;
             player = new Entity(p.objectId, "isMe");
@@ -98,8 +102,13 @@ public class DpsLogger {
             EnemyHitPacket p = (EnemyHitPacket) packet;
             Bullet bullet = player.getBullet(p.bulletId);
             Entity entity = getEntity(p.targetId);
+            System.out.println("Enemy hit: " + entity.id);
             hit(entity, bullet, p);
-            if (!entityHitList.containsKey(entity.id)) entityHitList.put(entity.id, entity);
+            if (!entityHitList.containsKey(entity.id)){
+                 entityHitList.put(entity.id, entity);
+                 System.out.println("Added to entityHitList: " + entity.id);
+                 System.out.println(entityHitList);
+                }
         } else if (packet instanceof DamagePacket) {
             DamagePacket p = (DamagePacket) packet;
             if (p.damageAmount > 0) {
@@ -205,6 +214,81 @@ public class DpsLogger {
         System.out.println("saved: " + mapInfo.displayName);
     }
 
+    public static byte[] getByteArray(String byteString) {
+        String[] list = new String[0];
+
+        int type = 0;
+        if (byteString.contains("Hex stream")) {
+            type = 1;
+            list = byteString.replace("  Hex stream: ", "").split(" ");
+        } else if (byteString.contains("[")) {
+            type = 2;
+            int starts = byteString.indexOf('[');
+            int ends = byteString.indexOf(']');
+            if (starts != -1 && ends != -1)
+                list = byteString.substring(starts, ends).replaceAll("[\\[\\] ]", "").split(",");
+        } else {
+            type = 3;
+            list = new String[byteString.length() / 2];
+            for (int i = 0; i < byteString.length(); i += 2) {
+                String sub = byteString.substring(i, i + 2);
+                list[i / 2] = sub;
+            }
+        }
+        byte[] b = new byte[list.length];
+        for (int i = 0; i < list.length; i++) {
+            String s = list[i];
+            if (type == 1) {
+                b[i] = (byte) ((Character.digit(s.charAt(0), 16) << 4) + Character.digit(s.charAt(1), 16));
+            } else if (type == 2) {
+                b[i] = Byte.parseByte(s);
+            } else if (type == 3) {
+                b[i] = (byte) ((Character.digit(s.charAt(0), 16) << 4) + Character.digit(s.charAt(1), 16));
+            }
+        }
+        return b;
+    }
+
+    public void readDpsLogsFromFile() throws Exception {
+        File folder = new File("C:\\Users\\Seanw\\Downloads\\tomato\\test");
+        File[] listOfFiles = folder.listFiles();
+        if (listOfFiles == null){ return;}
+        for (File file : listOfFiles) {
+            try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    byte[] data = getByteArray(line);
+                    if (data.length > 5) {
+                        BufferReader pData = new BufferReader(ByteBuffer.wrap(data).order(ByteOrder.BIG_ENDIAN));
+                        int size = pData.readInt();
+                        if (size != data.length) throw new RuntimeException("Incorrect size");
+        
+                        int type = pData.readByte();
+                        if (type == -1) {
+                            continue;
+                        }
+                        Packet packet = PacketType.getPacket(type).factory();
+                        packet.deserialize(pData);
+        
+                        packetCapture(packet, false);
+                    }
+                }
+                // System.out.println(logPackets);
+
+                
+        
+
+            
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        
+    }
+    
+
     /**
      * Filtered dungeons that will never need logging such as Nexus dungeons.
      *
@@ -237,6 +321,8 @@ public class DpsLogger {
 
         for (int i = 0; i < displayList.length && i < displaySize; i++) {
             Entity e = displayList[i];
+            System.out.println("PRINTING ENTITY");
+            System.out.println(e);
             sb.append(e.display(filter)).append("\n");
         }
 
@@ -251,6 +337,8 @@ public class DpsLogger {
     public Entity[] displayList() {
         ArrayList<Entity> list = new ArrayList<>();
         HashMap<Integer, Entity> damagerList = new HashMap<>();
+
+        System.out.println("entityList: " + entityList);
 
         List<Entity> sortedList = Arrays.stream(entityHitList.values().toArray(new Entity[0])).sorted(Comparator.comparingInt(Entity::maxHp).reversed()).collect(Collectors.toList());
 
@@ -285,6 +373,8 @@ public class DpsLogger {
             entity.setPlayerList(damagerList);
             list.add(entity);
         }
+        System.out.println("PRINTING LIST");
+        System.out.println(list);
 
         return list.toArray(new Entity[0]);
     }
@@ -571,12 +661,13 @@ public class DpsLogger {
     }
 
     private static String getName(int id) {
+        String name = "";
         try {
-            IdToAsset.objectName(id);
+            name = IdToAsset.objectName(id);
         } catch (AssetMissingException e) {
             e.printStackTrace();
         }
-        return "";
+        return name;
     }
 
     /**
@@ -793,6 +884,7 @@ public class DpsLogger {
         }
 
         public String display(Filter filter) {
+            System.out.println("Displaying, " + getName(objectType) + " " + objectType + "\n");
             StringBuilder sb = new StringBuilder();
             sb.append(getName(objectType)).append(" HP: ").append(maxHp()).append("\n");
             for (Damage dmg : damageList) {
@@ -808,7 +900,7 @@ public class DpsLogger {
                     if (!found) continue;
                 }
                 String extra = "    ";
-                String isMe = dmg.owner.isMe ? "->" : "  ";
+                String isMe = dmg.owner.isMe ? "\u2764" : "  ";
                 int index = name.indexOf(',');
                 if (index != -1) name = name.substring(0, index);
                 float pers = ((float) dmg.dmg * 100 / (float) maxHp());

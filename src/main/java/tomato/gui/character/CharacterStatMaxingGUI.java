@@ -3,6 +3,7 @@ package tomato.gui.character;
 import assets.AssetMissingException;
 import assets.ImageBuffer;
 import tomato.backend.data.VaultData;
+import tomato.gui.maingui.TomatoGUI;
 import tomato.realmshark.RealmCharacter;
 import tomato.backend.data.TomatoData;
 import tomato.realmshark.enums.CharacterClass;
@@ -32,6 +33,7 @@ public class CharacterStatMaxingGUI extends JPanel {
 
         setLayout(new BorderLayout());
         maxingPanel = new JPanel();
+        TomatoGUI.panelsToChangeColor.add(maxingPanel);
         maxingPanel.setLayout(new BoxLayout(maxingPanel, BoxLayout.Y_AXIS));
         maxingPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
 
@@ -48,6 +50,7 @@ public class CharacterStatMaxingGUI extends JPanel {
         seasonalRadio = new JRadioButton("Seasonal");
 
         JPanel missingPots = missingPotsPanel();
+        TomatoGUI.panelsToChangeColor.add(missingPots);
 
         add(missingPots, BorderLayout.NORTH);
     }
@@ -98,6 +101,7 @@ public class CharacterStatMaxingGUI extends JPanel {
                 int maxedStats = statsMaxed(c);
                 if (maxedStats != 8) {
                     JPanel boxChars = createPanelCharWithMissingStats(c, maxedStats);
+                    TomatoGUI.panelsToChangeColor.add(boxChars);
                     maxingPanel.add(boxChars);
                 }
             }
@@ -142,9 +146,11 @@ public class CharacterStatMaxingGUI extends JPanel {
      */
     private JPanel missingPotsPanel() {
         JPanel boxPots = CharacterPanelGUI.createMainBox();
+        TomatoGUI.panelsToChangeColor.add(boxPots);
         boxPots.setPreferredSize(new Dimension(390, CharacterPanelGUI.CHAR_PANEL_SIZE));
         boxPots.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         JPanel panelLeft = CharacterPanelGUI.createLeftBox();
+        TomatoGUI.panelsToChangeColor.add(panelLeft);
         panelLeft.add(Box.createVerticalGlue());
         charInvs.setEnabled(false);
         mainVault.setEnabled(false);
@@ -164,7 +170,11 @@ public class CharacterStatMaxingGUI extends JPanel {
         JPanel panelTop = new JPanel();
         JPanel panelMid = new JPanel();
         JPanel panelBot = new JPanel();
+        TomatoGUI.panelsToChangeColor.add(panelTop);
+        TomatoGUI.panelsToChangeColor.add(panelMid);
+        TomatoGUI.panelsToChangeColor.add(panelBot);
         JPanel rightPotDisplay = CharacterPanelGUI.createMidRightBox(panelTop, panelMid, panelBot);
+        TomatoGUI.panelsToChangeColor.add(rightPotDisplay);
         potStatLabels[0] = new JLabel("0", getImageIcon(StatPotion.Life), JLabel.CENTER);
         potStatLabels[1] = new JLabel("0", getImageIcon(StatPotion.Mana), JLabel.CENTER);
         potStatLabels[2] = new JLabel("0", getImageIcon(StatPotion.Attack), JLabel.CENTER);
@@ -195,6 +205,7 @@ public class CharacterStatMaxingGUI extends JPanel {
 
         rightPotDisplay.setLayout(new GridLayout(4, 1));
         JPanel panelVeryBot = new JPanel();
+        TomatoGUI.panelsToChangeColor.add(panelVeryBot);
 
         seasonalRadio.setForeground(Color.cyan);
 
@@ -221,6 +232,7 @@ public class CharacterStatMaxingGUI extends JPanel {
         boxPots.add(rightPotDisplay);
 
         JPanel outer = new JPanel();
+        TomatoGUI.panelsToChangeColor.add(outer);
         outer.setLayout(new BoxLayout(outer, BoxLayout.X_AXIS));
         outer.add(Box.createHorizontalGlue());
         outer.add(boxPots);
@@ -270,11 +282,16 @@ public class CharacterStatMaxingGUI extends JPanel {
     private JPanel createPanelCharWithMissingStats(RealmCharacter c, int maxedStats) {
         JPanel boxChars = CharacterPanelGUI.createMainBox();
         JPanel panelLeft = CharacterPanelGUI.createLeftBox();
+        TomatoGUI.panelsToChangeColor.add(panelLeft);
+        TomatoGUI.panelsToChangeColor.add(boxChars);
         boxChars.add(statMaxingChar(panelLeft, c, maxedStats));
 
         JPanel panelTop = new JPanel();
         JPanel panelMid = new JPanel();
         JPanel panelBot = new JPanel();
+        TomatoGUI.panelsToChangeColor.add(panelTop);
+        TomatoGUI.panelsToChangeColor.add(panelMid);
+        TomatoGUI.panelsToChangeColor.add(panelBot);
         boxChars.add(CharacterPanelGUI.createMidRightBox(panelTop, panelMid, panelBot));
         statMaxingStats(c, panelTop, panelMid, panelBot);
         return boxChars;
@@ -373,7 +390,7 @@ public class CharacterStatMaxingGUI extends JPanel {
         if (missing != 0) {
             s = String.format(name + ": %d (%d)", stat, missing);
         } else {
-            l.setForeground(Color.yellow);
+            l.setForeground(Color.BLACK);
             s = String.format(name + ": %d", stat);
         }
         l.setText(s);

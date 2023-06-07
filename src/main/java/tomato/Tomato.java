@@ -39,7 +39,8 @@ import java.util.regex.Pattern;
  * be used to trigger any functions listening to registered packets.
  */
 public class Tomato {
-    public static URL imagePath = Tomato.class.getResource("/icon/tomatoIcon.png");
+    public static URL imagePath = Tomato.class.getResource("/icon/cozy_bear.png");
+    public static URL gifPath = Tomato.class.getResource("/icon/cozy_bear.gif");
     private static final Pattern popperName = Pattern.compile("[^ ]*\"player\":\"([A-Za-z]*)[^ ]*");
     private static PacketProcessor packetProcessor;
     private static final DpsLogger dpsLogger = new DpsLogger();
@@ -115,7 +116,7 @@ public class Tomato {
 
 //        Register.INSTANCE.register(PacketType.MAPINFO, loadAsset);
 
-//        Register.INSTANCE.register(PacketType.TEXT, Tomato::textPacket);
+    //    Register.INSTANCE.register(PacketType.TEXT, Tomato::textPacket);
 
 //        Register.INSTANCE.register(PacketType.NOTIFICATION, Tomato::notificationPacket);
 
@@ -197,6 +198,7 @@ public class Tomato {
      * Stop the packet sniffer.
      */
     public static void stopPacketSniffer() {
+        System.out.println("turn off sniffer");
         if (packetProcessor != null) {
             packetProcessor.stopSniffer();
             packetProcessor = null;
@@ -230,7 +232,7 @@ public class Tomato {
      *
      * @param packet packets for dps logger.
      */
-    private static void dpsLoggerPacket(Packet packet) {
+    public static void dpsLoggerPacket(Packet packet) {
         dpsLogger.packetCapture(packet, true);
     }
 
@@ -239,7 +241,7 @@ public class Tomato {
      *
      * @param packet The text packet.
      */
-    private static void textPacket(Packet packet) {
+    public static void textPacket(Packet packet) {
         if (packet instanceof TextPacket) {
             TextPacket tPacket = (TextPacket) packet;
             TomatoGUI.appendTextAreaChat(String.format("[%s]: %s\n", tPacket.name, tPacket.text));

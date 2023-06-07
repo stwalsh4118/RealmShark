@@ -3,9 +3,15 @@ package tomato.gui.character;
 import assets.ImageBuffer;
 import tomato.realmshark.RealmCharacter;
 import tomato.backend.data.TomatoData;
+import tomato.gui.maingui.TomatoGUI;
 import tomato.realmshark.enums.CharacterClass;
 
 import javax.swing.*;
+
+import com.github.weisj.darklaf.LafManager;
+import com.github.weisj.darklaf.theme.event.ThemeChangeEvent;
+import com.github.weisj.darklaf.theme.event.ThemeChangeListener;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
@@ -25,6 +31,12 @@ public class CharacterExaltGUI extends JPanel {
         JPanel left = new JPanel();
         JPanel right = new JPanel();
         JPanel topLeft = new JPanel();
+        TomatoGUI.panelsToChangeColor.add(top);
+        TomatoGUI.panelsToChangeColor.add(left);
+        TomatoGUI.panelsToChangeColor.add(right);
+        TomatoGUI.panelsToChangeColor.add(topLeft);
+
+
 
         JScrollPane spLeft = new JScrollPane(left);
         JScrollPane spRight = new JScrollPane(right);
@@ -66,6 +78,7 @@ public class CharacterExaltGUI extends JPanel {
             JLabel exalts = new JLabel(ex);
 
             JPanel p = new JPanel();
+            TomatoGUI.panelsToChangeColor.add(p);
             p.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, Color.BLACK));
             p.add(exalts);
             p.setPreferredSize(new Dimension(35, 27));
@@ -86,6 +99,8 @@ public class CharacterExaltGUI extends JPanel {
                 classes = new JLabel("Missing");
             }
             JPanel p = new JPanel(new GridBagLayout());
+            TomatoGUI.panelsToChangeColor.add(p);
+
             p.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, Color.BLACK));
             p.setPreferredSize(new Dimension(110, 27));
             p.add(classes);
@@ -100,6 +115,8 @@ public class CharacterExaltGUI extends JPanel {
         for (int i = 0; i < charListSize + 2; i++) {
             for (int j = 0; j < 8; j++) {
                 JPanel p = new JPanel();
+                TomatoGUI.panelsToChangeColor.add(p);
+
                 p.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, Color.BLACK));
                 grid[i][j] = new JLabel("-");
                 p.add(grid[i][j]);

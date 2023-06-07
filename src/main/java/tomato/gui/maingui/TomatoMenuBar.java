@@ -3,6 +3,8 @@ package tomato.gui.maingui;
 import com.github.weisj.darklaf.LafManager;
 import com.github.weisj.darklaf.theme.*;
 import tomato.Tomato;
+import tomato.gui.themes.cozy;
+import tomato.gui.themes.saitama;
 import util.PropertiesManager;
 
 import javax.swing.*;
@@ -15,7 +17,7 @@ import java.awt.event.ActionListener;
 public class TomatoMenuBar implements ActionListener {
     private JMenuItem about, borders, clearChat, bandwidth, javav, clearDpsLogs, theme, fontMenu, dpsEquipment;
     private JRadioButtonMenuItem fontSize8, fontSize12, fontSize16, fontSize24, fontSize48, fontSizeCustom;
-    private JRadioButtonMenuItem themeDarcula, themeighContrastDark, themeHighContrastLight, themeIntelliJ, themeSolarizedDark, themeSolarizedLight;
+    private JRadioButtonMenuItem themeDarcula, themeighContrastDark, themeHighContrastLight, themeIntelliJ, themeSolarizedDark, themeSolarizedLight, themeCozy, themeSaitama;
     private JRadioButtonMenuItem fontNameMonospaced, fontNameDialog, fontNameDialogInput, fontNameSerif, fontNameSansSerif, fontNameSegoe;
     private JRadioButtonMenuItem dpsEquipmentNone, dpsEquipmentSimple, dpsEquipmentFullSingleRow, dpsEquipmentFullMultiRow;
     private JCheckBoxMenuItem saveDpsToFile, fontStyleBold, fontStyleItalic;
@@ -70,6 +72,9 @@ public class TomatoMenuBar implements ActionListener {
         themeIntelliJ = addRadioButtonMenuItem(groupTheme, theme, "IntelliJ Theme");
         themeSolarizedDark = addRadioButtonMenuItem(groupTheme, theme, "Solarized Dark Theme");
         themeSolarizedLight = addRadioButtonMenuItem(groupTheme, theme, "Solarized Light Theme");
+        themeCozy = addRadioButtonMenuItem(groupTheme, theme, "Cozy Theme");
+        themeSaitama = addRadioButtonMenuItem(groupTheme, theme, "Saitama Theme");
+
         setThemeRadioButton();
 
         ButtonGroup groupFontSize = new ButtonGroup();
@@ -160,6 +165,12 @@ public class TomatoMenuBar implements ActionListener {
                 break;
             case "solarizedLight":
                 themeSolarizedLight.setSelected(true);
+                break;
+            case "cozy":
+                themeCozy.setSelected(true);
+                break;
+            case "saitama":
+                themeSaitama.setSelected(true);
                 break;
             default:
             case "darcula":
@@ -383,6 +394,12 @@ public class TomatoMenuBar implements ActionListener {
         } else if (e.getSource() == themeSolarizedLight) { // theme
             LafManager.install(new SolarizedLightTheme());
             PropertiesManager.setProperties("theme", "solarizedLight");
+        } else if (e.getSource() == themeCozy) {
+            LafManager.install(new cozy());
+            PropertiesManager.setProperties("theme", "cozy");
+        } else if (e.getSource() == themeSaitama) {
+            LafManager.install(new saitama());
+            PropertiesManager.setProperties("theme", "saitama");
         } else if (e.getSource() == fontSize8) { // font size
             TomatoGUI.fontSizeTextAreas(8);
             PropertiesManager.setProperties("fontSize", Integer.toString(8));

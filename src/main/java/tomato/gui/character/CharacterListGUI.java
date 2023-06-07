@@ -2,7 +2,9 @@ package tomato.gui.character;
 
 import assets.ImageBuffer;
 import tomato.realmshark.RealmCharacter;
+import tomato.Tomato;
 import tomato.backend.data.TomatoData;
+import tomato.gui.maingui.TomatoGUI;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,6 +23,7 @@ public class CharacterListGUI extends JPanel {
 
         setLayout(new BorderLayout());
         charPanel = new JPanel();
+        TomatoGUI.panelsToChangeColor.add(charPanel);
         charPanel.add(new Label("Enter Daily Quest Room to see chars"));
         JScrollPane scrollPaneChars = new JScrollPane(charPanel);
         scrollPaneChars.getVerticalScrollBar().setUnitIncrement(40);
@@ -42,6 +45,7 @@ public class CharacterListGUI extends JPanel {
      */
     private JPanel leftColumn(RealmCharacter c) {
         JPanel panel = CharacterPanelGUI.createLeftBox();
+        TomatoGUI.panelsToChangeColor.add(panel);
 
         try {
             int eq = c.skin;
@@ -68,10 +72,12 @@ public class CharacterListGUI extends JPanel {
      */
     private JPanel midColumn(RealmCharacter c) {
         JPanel panel = new JPanel();
+        TomatoGUI.panelsToChangeColor.add(panel);
         panel.setMaximumSize(new Dimension(120, CharacterPanelGUI.CHAR_PANEL_SIZE));
         panel.setPreferredSize(new Dimension(120, CharacterPanelGUI.CHAR_PANEL_SIZE));
 
         JPanel panelEquip = new JPanel();
+        TomatoGUI.panelsToChangeColor.add(panelEquip);
         panelEquip.setBorder(BorderFactory.createLineBorder(Color.black));
         panelEquip.setPreferredSize(new Dimension(90, 30));
         for (int i = 0; i < 4; i++) {
@@ -92,6 +98,7 @@ public class CharacterListGUI extends JPanel {
         panel.add(panelEquip);
 
         JPanel panelBelt = new JPanel();
+        TomatoGUI.panelsToChangeColor.add(panelBelt);
         panelBelt.setBorder(BorderFactory.createLineBorder(Color.black));
         int add = c.qs3 ? 40 : 0;
         panelBelt.setPreferredSize(new Dimension(80 + add, 30));
@@ -123,6 +130,7 @@ public class CharacterListGUI extends JPanel {
      */
     private JPanel rightColumn(RealmCharacter c, boolean backpack) {
         JPanel panel = new JPanel();
+        TomatoGUI.panelsToChangeColor.add(panel);
         panel.setPreferredSize(new Dimension(90, 50));
         panel.setMaximumSize(new Dimension(120, 50));
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -132,6 +140,8 @@ public class CharacterListGUI extends JPanel {
 
         JPanel topRow = new JPanel();
         JPanel botRow = new JPanel();
+        TomatoGUI.panelsToChangeColor.add(topRow);
+        TomatoGUI.panelsToChangeColor.add(botRow);
         panel.add(topRow);
         panel.add(botRow);
 
@@ -163,6 +173,7 @@ public class CharacterListGUI extends JPanel {
      */
     private JPanel invBackpack(RealmCharacter c) {
         JPanel panel = new JPanel();
+        TomatoGUI.panelsToChangeColor.add(panel);
         panel.setMaximumSize(new Dimension(120, CharacterPanelGUI.CHAR_PANEL_SIZE));
         panel.setPreferredSize(new Dimension(120, CharacterPanelGUI.CHAR_PANEL_SIZE));
 
@@ -192,6 +203,7 @@ public class CharacterListGUI extends JPanel {
         charPanel.removeAll();
         for (RealmCharacter c : data.chars) {
             JPanel box = CharacterPanelGUI.createMainBox();
+            TomatoGUI.panelsToChangeColor.add(box);
 
             box.add(leftColumn(c));
             box.add(midColumn(c));

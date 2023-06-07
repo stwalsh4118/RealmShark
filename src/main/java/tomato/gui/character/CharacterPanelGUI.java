@@ -6,6 +6,10 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import java.awt.*;
+import com.github.weisj.darklaf.LafManager;
+import com.github.weisj.darklaf.theme.Theme;
+import com.github.weisj.darklaf.theme.event.ThemeChangeEvent;
+import com.github.weisj.darklaf.theme.event.ThemeChangeListener;
 
 /**
  * Character GUI class to display character data in the character tab.
@@ -26,6 +30,7 @@ public class CharacterPanelGUI extends JPanel {
         CharacterStatsGUI characterStatsGUI = new CharacterStatsGUI(data);
 
         JTabbedPane tabbedPane = new JTabbedPane();
+
         add(tabbedPane);
         tabbedPane.addTab("Characters", charListPanel);
         tabbedPane.addTab("Statistics", characterStatsGUI);

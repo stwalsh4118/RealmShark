@@ -2,16 +2,19 @@ package tomato.gui.maingui;
 
 import com.github.weisj.darklaf.LafManager;
 import com.github.weisj.darklaf.theme.*;
+import com.github.weisj.darklaf.theme.event.ThemeChangeEvent;
+import com.github.weisj.darklaf.theme.event.ThemeChangeListener;
+
 import packets.data.QuestData;
 import tomato.Tomato;
-import tomato.gui.fame.FameTrackerGUI;
+import tomato.backend.data.TomatoData;
 import tomato.gui.QuestGUI;
 import tomato.gui.SmartScroller;
 import tomato.gui.character.CharacterPanelGUI;
+import tomato.gui.fame.FameTrackerGUI;
 import tomato.gui.security.SecurityGUI;
-import tomato.backend.data.TomatoData;
-import util.PropertiesManager;
 import util.Pair;
+import util.PropertiesManager;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -47,6 +50,8 @@ public class TomatoGUI {
     private Image icon;
     private JButton next, prev;
     private TomatoData data;
+    public static ArrayList<JPanel> panelsToChangeColor = new ArrayList<>();
+    public static ArrayList<JLabel> labelsToChangeColor = new ArrayList<>();
 
     public TomatoGUI(TomatoData data) {
         this.data = data;
@@ -135,7 +140,18 @@ public class TomatoGUI {
         mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         mainPanel.setLayout(new BorderLayout());
         mainPanel.add(tabbedPane, BorderLayout.CENTER);
-        mainPanel.add(statusLabel, BorderLayout.SOUTH);
+//        mainPanel.add(statusLabel, BorderLayout.SOUTH);
+
+
+
+        ImageIcon cozy_bear_gif = new ImageIcon(Tomato.gifPath);
+
+        JLabel cozy_bear_label = new JLabel(cozy_bear_gif);
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.add(statusLabel, BorderLayout.SOUTH);
+        bottomPanel.add(cozy_bear_label,BorderLayout.NORTH);
+        mainPanel.add(bottomPanel, BorderLayout.SOUTH);
+
 
         icon = Toolkit.getDefaultToolkit().getImage(Tomato.imagePath);
         loadFontSizePreset();
@@ -145,6 +161,33 @@ public class TomatoGUI {
         makeFrame();
 
         frame.setVisible(true);
+
+
+        ThemeChangeListener tcl = new ThemeChangeListener() {
+
+            @Override
+            public void themeChanged(ThemeChangeEvent e) {
+                if(e.getNewTheme().getName() == "Cozy") {
+                    System.out.println("Cozy theme");
+                    for(JPanel panel : panelsToChangeColor) {
+                        panel.setBackground(new Color(0xffbed8));
+                    }
+                    for(JLabel label : labelsToChangeColor) {
+                        label.setBackground(new Color(0xffbed8));
+                    }
+                } else {
+                    //reset panel to use theme
+                    for(JPanel panel : panelsToChangeColor) {
+                        panel.setBackground(null);
+                    }
+                }           
+            }
+
+            @Override
+            public void themeInstalled(ThemeChangeEvent e) {
+            }
+        };
+        LafManager.addThemeChangeListener(tcl);
     }
 
     /**
@@ -256,8 +299,9 @@ public class TomatoGUI {
      * Creates the frame with icon.
      */
     public void makeFrame() {
-        frame = new JFrame("    Tomato    ");
+        frame = new JFrame("    Ches \u2764 Cozy    ");
         frame.setIconImage(icon);
+
         frame.setSize(windowWidth, windowHeight);
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -274,6 +318,7 @@ public class TomatoGUI {
      * @param s The text to be added at the end of text area.
      */
     public static void appendTextAreaChat(String s) {
+
         if (textAreaChat != null) textAreaChat.append(s);
     }
 
